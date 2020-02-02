@@ -1,13 +1,13 @@
 # ingress ip
 resource "azurerm_public_ip" "ingress_ip" {
-  name                = "${var.PROJECT}${var.INSTANCE}${var.ENVIRONMENT}${random_integer.uuid.result}pip"
+  name                = "${var.PROJECT}${var.INSTANCE}${var.ENVIRONMENT}${random_integer.random_id.result}pip"
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
 
   allocation_method = "Static"
-  domain_name_label            = "${var.PROJECT}${var.INSTANCE}${var.ENVIRONMENT}${random_integer.uuid.result}"
+  domain_name_label            = "${var.PROJECT}${var.INSTANCE}${var.ENVIRONMENT}${random_integer.random_id.result}"
 
-  tags {
+  tags = {
     project = "${var.PROJECT}"
     instance = "${var.INSTANCE}"
     environment = "${var.ENVIRONMENT}"
@@ -15,7 +15,7 @@ resource "azurerm_public_ip" "ingress_ip" {
 }
 
 provider "kubernetes" {
-  config_path            = "${local_file.kube_config.filename}"
+  config_path            = "${var.K8S_KUBE_CONFIG}"
 }
 
 resource "kubernetes_service_account" "tiller_sa" {
@@ -85,7 +85,7 @@ resource "local_file" "crdinstall" {
   # helm init
   provisioner "local-exec" {
     command = "./cert-crd_install.sh"
-    environment {
+    environment = {
       KUBECONFIG = "${var.K8S_KUBE_CONFIG}"
       HELM_HOME  = "${var.K8S_HELM_HOME}"
     }
@@ -116,7 +116,7 @@ resource "local_file" "cert-manager-check" {
   # helm init
   provisioner "local-exec" {
     command = "./cert-check.sh"
-    environment {
+    environment = {
       KUBECONFIG = "${var.K8S_KUBE_CONFIG}"
       HELM_HOME  = "${var.K8S_HELM_HOME}"
     }

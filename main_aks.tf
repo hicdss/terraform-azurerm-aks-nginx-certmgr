@@ -1,6 +1,6 @@
 # service principal for aks
 resource "azuread_application" "aks" {
-  name = "${var.PROJECT}${var.INSTANCE}${var.ENVIRONMENT}${random_integer.uuid.result}-aks"
+  name = "${var.PROJECT}${var.INSTANCE}${var.ENVIRONMENT}${random_integer.random_id.result}-aks"
 }
 
 resource "azuread_service_principal" "aks" {
@@ -26,10 +26,10 @@ resource "azurerm_role_assignment" "aks-network-contributor" {
 
 
 resource "azurerm_kubernetes_cluster" "main" {
-  name                = "${var.PROJECT}${var.INSTANCE}${var.ENVIRONMENT}${random_integer.uuid.result}aks"
+  name                = "${var.PROJECT}${var.INSTANCE}${var.ENVIRONMENT}${random_integer.random_id.result}aks"
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
-  dns_prefix          = "${var.PROJECT}${var.INSTANCE}${var.ENVIRONMENT}${random_integer.uuid.result}"
+  dns_prefix          = "${var.PROJECT}${var.INSTANCE}${var.ENVIRONMENT}${random_integer.random_id.result}"
   kubernetes_version  = "${var.K8S_VER}"
 
   depends_on = [
@@ -79,9 +79,10 @@ resource "local_file" "kube_config" {
   # helm init
   provisioner "local-exec" {
     command = "helm init --client-only"
-    environment {
+    environment = {
       KUBECONFIG = "${var.K8S_KUBE_CONFIG}"
       HELM_HOME  = "${var.K8S_HELM_HOME}"
     }
   }
+  depends_on = [azurerm_kubernetes_cluster.main]
 }

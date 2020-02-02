@@ -31,13 +31,13 @@ variable "DNS_SERVERS" {
   description = "The DNS servers to be used with vNet."
   default     = []
 }
-variable "SUBNET_NAMES" {
+variable "SUBNET_NAME" {
   description = "A list of public subnets inside the vNet."
-  default     = ["aks-subnet"]
+  default     = "aks-subnet"
 }
-variable "SUBNET_PREFIXES" {
+variable "SUBNET_PREFIX" {
   description = "The address prefix to use for the subnet."
-  default     = ["10.10.1.0/24"]
+  default     = "10.10.1.0/24"
 }
 
 /*

@@ -7,9 +7,8 @@ resource "azurerm_virtual_network" "vnet" {
 }
 
 resource "azurerm_subnet" "subnet" {
-  name                      = "${var.SUBNET_NAMES[count.index]}"
+  name                      = "${var.SUBNET_NAME}"
   virtual_network_name      = "${azurerm_virtual_network.vnet.name}"
   resource_group_name       = "${azurerm_resource_group.main.name}"
-  address_prefix            = "${var.SUBNET_PREFIXES[count.index]}"
-  count                     = "${length(var.SUBNET_NAMES)}"
+  address_prefix            = "${var.SUBNET_PREFIX}"
 }
